@@ -205,7 +205,7 @@ class ArrayEngine extends Engine
                 $current = $current->all();
             }
 
-            if (is_array($current) && array_is_list($current)) {
+            if (is_array($current) && $this->isListArray($current)) {
                 $remaining = implode('.', array_slice($segments, $i));
 
                 return Collection::make($current)->map(fn ($item) => data_get($item, $remaining))->flatten()->all();
@@ -223,6 +223,18 @@ class ArrayEngine extends Engine
         }
 
         return $current;
+    }
+
+    /**
+     * Determine if the given array is a list (PHP 8.0–compatible array_is_list).
+     */
+    private function isListArray(array $array): bool
+    {
+        if ($array === []) {
+            return true;
+        }
+
+        return array_keys($array) === range(0, count($array) - 1);
     }
 
     /**
